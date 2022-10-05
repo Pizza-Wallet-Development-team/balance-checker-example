@@ -4,8 +4,8 @@ Get a list of tokens a user holds and show balances for each one.
 
 # getting started
 
-copy url and git clone /n
+copy url and git clone 
 
-run yarn /n
+run yarn 
 
-yarn start /n
+yarn start 
