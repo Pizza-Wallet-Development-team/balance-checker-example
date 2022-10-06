@@ -3,7 +3,8 @@ import ConnectAccount from './components/Account/ConnectAccount';
 import { Layout } from 'antd';
 import './App.css';
 import 'antd/dist/antd.css';
-import ChainSelector from './components/ChainSelector';
+// import ChainSelector from './components/ChainSelector';
+import TokenList from './components/TokenList/TokenList';
 
 const { Header } = Layout;
 
@@ -18,7 +19,6 @@ const styles = {
     fontFamily: 'Sora, sans-serif',
   },
   header: {
-    position: 'fixed',
     zIndex: 1,
     width: '100%',
     backgroundColor: 'transparent',
@@ -31,10 +31,11 @@ const styles = {
   headerRight: {
     display: 'flex',
     gap: '10px',
-    alignItems: 'center',
+    alignItems: 'right',
     paddingRight: '10px',
     fontSize: '15px',
     fontWeight: '600',
+    marginLeft: 'auto',
   },
   content: {
     display: 'flex',
@@ -62,10 +63,11 @@ function App() {
     <Layout style={styles.layout}>
       <Header style={styles.header}>
         <div style={styles.headerRight}>
-          <ChainSelector />
+          {/* <ChainSelector /> */}
           <ConnectAccount />
         </div>
       </Header>
+      <TokenList />
     </Layout>
   );
 }

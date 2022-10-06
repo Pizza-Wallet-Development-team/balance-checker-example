@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
+const Web3 = require('web3');
 
 export const n6 = new Intl.NumberFormat('en-us', {
   style: 'decimal',
@@ -57,3 +58,12 @@ export function parseBigNumberToFloat(val: BigNumber, decimals = 18) {
   const parsed = parseFloat(formatted);
   return parsed;
 }
+
+export const convertToNumber = (hex: any, decimals: any) => {
+  const balance = Web3.utils.toBN(hex);
+  let balanceDecimal = balance;
+  if (decimals && balance.toLocaleString() === '0' && decimals < 20) {
+    balanceDecimal = balance.div(Web3.utils.toBN(10 ** decimals));
+  }
+  return balanceDecimal.toLocaleString();
+};
