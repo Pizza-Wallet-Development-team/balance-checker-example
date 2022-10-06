@@ -1,33 +1,47 @@
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
+import { abi } from '../../../constants/constants';
+import { convertToNumber } from '../../../utils/formatters';
+import { useGetTokenListToQuery } from '../../../hooks/useGetTokenListToQuery';
 
-export function getUserBalancesGraph() {
+export function useGetUserBalancesGraph() {
   const { account } = useWeb3React();
+  const [balances, setBalances] = useState([]);
+  const tokenList: any = useGetTokenListToQuery();
 
-  const convertIndexToAlphetString = (number) =>
+  useEffect(() => {
+    if (tokenList && account) {
+      getUsersBalances();
+    }
+  }, [tokenList, account]);
+
+  const convertIndexToAlphetString = (number: number) =>
     number
       .toString()
       .split('')
       .map((numberChar) => String.fromCharCode(65 + parseInt(numberChar)))
       .join('');
 
-  const queryTemplate = (index, { address }, callData) => `
+  const queryTemplate = (
+    index: number,
+    { address }: { address: string },
+    callData: any
+  ) => `
 ${convertIndexToAlphetString(
   index
 )}: call(data: { to: "${address}", data: "${callData}" }) { data }`;
 
-  const retrieveTokenBalanceViaGraphQL = (tokens) => {
+  const retrieveTokenBalanceViaGraphQL = (tokens: any) => {
     const walletAddress = account;
     const ethersInterface = new ethers.utils.Interface(abi);
-    console.log('ethersInterface - ', ethersInterface);
-    console.log('wallet address - ', walletAddress);
 
     const callData = ethersInterface.encodeFunctionData('balanceOf', [
       walletAddress,
     ]);
 
     const query = tokens
-      .map((token, index) => {
+      .map((token: any, index: number) => {
         return queryTemplate(index, token, callData);
       })
       .join('\n');
@@ -39,8 +53,8 @@ ${convertIndexToAlphetString(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        userName: userName,
-        password: password,
+        userName: `${userName}`,
+        password: `${password}`,
       },
       body: JSON.stringify({ query: `{ block { ${query} } }` }),
     }).then((data) => data.json());
@@ -51,8 +65,8 @@ ${convertIndexToAlphetString(
     // I need need to do a performance check here to calculate how much time passes
 
     const tokenBalances = await retrieveTokenBalanceViaGraphQL(tokenList).then(
-      ({ data: { block: balances } }) => {
-        const output = {};
+      ({ data: { block: balances } }: { data: { block: [] } }) => {
+        let output: any;
         Object.entries(balances).map(([, { data: hex }], index) => {
           const { name, decimals, symbol } = tokenList[index];
           output[name] = `${convertToNumber(hex, decimals)} ${symbol}`;
@@ -60,10 +74,10 @@ ${convertIndexToAlphetString(
         return output;
       }
     );
-    console.log(tokenBalances);
+    console.log('returned token balances - ', tokenBalances);
 
-    return tokenBalances;
+    setBalances(tokenBalances);
   };
 
-  return getUsersBalances();
+  return balances;
 }
