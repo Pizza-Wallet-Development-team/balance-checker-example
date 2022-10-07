@@ -33,7 +33,8 @@
     "react-blockies": "^1.4.1",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "swr": "^1.3.0"
+    "swr": "^1.3.0",
+    "bignumber.js": "^9.1.0"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^10.1.0",
