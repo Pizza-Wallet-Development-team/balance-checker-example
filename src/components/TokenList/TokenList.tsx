@@ -8,6 +8,7 @@ import { getBalances } from './getBalanceMethods/getBalances';
 
 function TokenList() {
   const [balances, setBalances] = useState([]);
+  const [address, setAddress] = useState('');
   const { account } = useWeb3React();
   const tokenList: any = useGetTokenListToQuery();
   // call to graphql api below
@@ -25,18 +26,30 @@ function TokenList() {
   // }, [tokenList, account]);
 
   const handleGetTokenBalances = async () => {
-    if (account && tokenList) {
-      // make batch api request here with web3
-      // or make call with eth balance checker
-      // getBalancesWithEthBalanceChecker();
-      const anotherAccount = '0x00000000219ab540356cbb839cbe05303d7705fa';
-      const balances = await getBalances(anotherAccount, tokenList);
+    if (account && tokenList && address) {
+      console.log('address entered');
+      // if address has been entered check that
+      const balances = await getBalances(address, tokenList);
+      const balancesAboveZero = balances.filter(
+        (token: any) => token.amount !== '0'
+      );
+      setBalances(balancesAboveZero);
+    } else if (account && tokenList) {
+      // if no input address use users address (if logged in)
+      const balances = await getBalances(account, tokenList);
 
       const balancesAboveZero = balances.filter(
         (token: any) => token.amount !== '0'
       );
       setBalances(balancesAboveZero);
+    } else {
+      console.log("You didn't provide an address or log in");
     }
+  };
+
+  const handleInputOnchange = (e: any) => {
+    const address = e.target.value;
+    setAddress(address);
   };
 
   // const getBalancesWithEthBalanceChecker = () => {
@@ -55,7 +68,7 @@ function TokenList() {
   //   });
   // };
 
-  console.log('tokenList - ', tokenList);
+  console.log('tokenList to query - ', tokenList);
 
   if (!account) return null;
 
@@ -64,6 +77,7 @@ function TokenList() {
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '25px' }}>
         Token list
       </h1>
+      <input onChange={handleInputOnchange} placeholder="enter address here" />
       <button onClick={handleGetTokenBalances}>Get token balances</button>
       {balances &&
         balances.map((token: any, i: number) => {
