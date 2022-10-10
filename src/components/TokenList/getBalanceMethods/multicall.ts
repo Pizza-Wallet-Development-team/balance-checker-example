@@ -2,6 +2,7 @@ import { Fragment, Interface, JsonFragment } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
 import { providers } from 'ethers';
 import { BigNumber, Bytes } from 'ethers';
+import { getRpcProvider } from './getRpcProvider';
 import MULTICALL_ABI from './multicallAbi.json';
 
 const MAX_MULTICALL_SIZE = 100;
@@ -40,10 +41,11 @@ export const fetchDataUsingMulticall = async (
 ): Promise<{ data: unknown; blockNumber: number }[]> => {
   // 1. create contract using multicall contract address and abi...
 
+  console.log('chainId from multicall function - ', chainId);
   // Below should call a function to return a provider based on the chainId
-  const provider = new providers.StaticJsonRpcProvider(
-    process.env.REACT_APP_RPC_PROVIDER
-  );
+  const rpcProvider = getRpcProvider(chainId);
+  console.log('rpc provider - ', rpcProvider);
+  const provider = new providers.StaticJsonRpcProvider(rpcProvider);
 
   const multicallContract = new Contract(
     multicallAddress,
