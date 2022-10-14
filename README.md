@@ -7,6 +7,24 @@ Examples include a way to fetch user balances with graphQl, using the eth balanc
 
 copy url and git clone 
 
+# Set environment variables
+
+Create an Alchemy App
+Go to Alchemy and create an app on the eth mainnet and the polygon mainnet
+Click View Key and Copy the HTTPS URL
+Add it to your .env.local file 
+
+```sh
+REACT_APP_RPC_PROVIDER="your mainnet http link here"
+REACT_APP_RPC_PROVIDER_POLYGON="your polygon http link here"
+```
+
+Set react app multicall as below - 
+
+```sh
+REACT_APP_MULTICALL_ADDRESS="0xcA11bde05977b3631167028862bE2a173976CA11"
+```
+
 run yarn (to install dependencies)
 
 yarn start 
